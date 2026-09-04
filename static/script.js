@@ -1,7 +1,9 @@
 const button = document.getElementById("submit");
+const newButton = document.getElementById("new");
 const input = document.getElementById("guess");
 const board = document.getElementById("board");
 const output = document.getElementById("output");
+
 
 async function handleClick() {
     const response = await fetch(`/score/${input.value}`);
@@ -10,7 +12,7 @@ async function handleClick() {
         output.textContent = data.detail;
         return;
     }
-    
+   
     const row = document.createElement("div");
     row.className = "row";
     const lowerInput = input.value.toLowerCase();
@@ -28,8 +30,28 @@ async function handleClick() {
     }
     board.appendChild(row);
 
-    output.textContent = data.feedback;
+    if (data.win) {
+        output.textContent = "Good job!";
+    } else if (data.lost) {
+        output.textContent = `Nice try! The word was ${data.answer}!`;
+    }
+
 }
+
+async function handleNew() {
+    const response = await fetch("/new");
+    const data = await response.json();
+    if (!response.ok) {
+        output.textContent = data.detail;
+        return;
+    }
+    board.innerHTML = "";
+    output.textContent = "";
+}
+
 button.addEventListener("click", handleClick);
+newButton.addEventListener("click", handleNew);
+
+
 
 
