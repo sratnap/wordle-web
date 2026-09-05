@@ -31,7 +31,7 @@ def check_id(response: Response, session_id: str | None):
 
 def start_game(session_id: str):
     answer = random.choice(words)
-    games[session_id] = {"answer": answer, "turns": 0, "over": False}
+    games[session_id] = {"answer": answer, "turns": 0, "over": False, "guesses": [], "win": False, "lost": False}
 
 
 @app.get("/")
@@ -46,6 +46,14 @@ def new_game(response: Response, session_id: str | None = Cookie(default=None)):
     return {}
 
 
+@app.get("/state")
+def state(response: Response, session_id: str | None = Cookie(default=None)):
+    if session_id is None or session_id not in games:
+        return {"guesses": [], "turns": 0, "over": False, "answer": None, "win": False, "lost": False}
+    answer = games[session_id]["answer"] if games[session_id]["over"] else None    
+    return {"guesses": games[session_id]["guesses"], "turns": games[session_id]["turns"], "over": games[session_id]["over"], "answer": answer, "win": games[session_id]["win"], "lost": games[session_id]["lost"]}
+
+
 @app.get("/score/{guess}")
 def score(guess: str, response: Response, session_id: str | None = Cookie(default=None)):
     if guess not in words:
@@ -54,19 +62,17 @@ def score(guess: str, response: Response, session_id: str | None = Cookie(defaul
     if session_id not in games:
         start_game(session_id)
     if games[session_id]["over"]:
-        raise HTTPException(status_code=400, detail="Good game!")
-    win = False
-    lost = False   
+        raise HTTPException(status_code=400, detail="Good game!") 
     feedback = score_guess(guess, games[session_id]["answer"])
+    games[session_id]["guesses"].append([guess, feedback])
     games[session_id]["turns"] += 1
     if guess == games[session_id]["answer"]:
-        win = True
+        games[session_id]["win"] = True
         games[session_id]["over"] = True
-    
-    if games[session_id]["turns"] == NUM_GUESSES and not win:
-        lost = True
+    if games[session_id]["turns"] == NUM_GUESSES and not games[session_id]["win"]:
+        games[session_id]["lost"] = True
         games[session_id]["over"] = True
     answer = games[session_id]["answer"] if games[session_id]["over"] else None
-    return {"feedback": feedback, "turns": games[session_id]["turns"], "win": win, "lost": lost, "over": games[session_id]["over"], "answer": answer}
+    return {"feedback": feedback, "turns": games[session_id]["turns"], "win": games[session_id]["win"], "lost": games[session_id]["lost"], "over": games[session_id]["over"], "answer": answer}
 
 
