@@ -73,6 +73,6 @@ def score(guess: str, response: Response, session_id: str | None = Cookie(defaul
         games[session_id]["lost"] = True
         games[session_id]["over"] = True
     answer = games[session_id]["answer"] if games[session_id]["over"] else None
-    return {"feedback": feedback, "turns": games[session_id]["turns"], "win": games[session_id]["win"], "lost": games[session_id]["lost"], "over": games[session_id]["over"], "answer": answer}
+    return {"feedback": feedback, "guesses": games[session_id]["guesses"], "turns": games[session_id]["turns"], "win": games[session_id]["win"], "lost": games[session_id]["lost"], "over": games[session_id]["over"], "answer": answer}
 
 

@@ -13,6 +13,15 @@
                 grid-template-columns: repeat(5, 50px);
                 gap: 5px;
             }
+            .key-row {
+                display: flex;
+                gap: 5px;
+            }
+            .key {
+                width: 30px;
+                height: 30px;
+                border: 2px solid #888;
+            }
             .green { background-color: #6aaa64; }
             .yellow { background-color: #c9b458; }
             .grey { background-color: #787c7e; }
@@ -24,6 +33,7 @@
         <button id="submit">Guess</button>
         <button id="new">New Game</button>
         <div id="board"></div>
+        <div id="keyboard"></div>
         <p id="output"></p>
         <script src="/static/script.js"></script>
     </body>
