@@ -35,7 +35,7 @@ async function handleClick() {
     const guess = input.value.toLowerCase();
     const feedback = data.feedback;
     board.appendChild(buildRow(guess, feedback));
-
+    input.value = "";
     showOutcome(data.win, data.lost, data.answer);
 }
 
@@ -72,6 +72,11 @@ async function buildBoard() {
 }
 
 button.addEventListener("click", handleClick);
+input.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+        handleClick();
+    }
+});
 newButton.addEventListener("click", handleNew);
 
 buildBoard();
